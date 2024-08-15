@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="utf-8">
+    <title>ChatApp</title>
+    <style>
+        
+        h2
+        {
+            color: red;
+        } 
+
+        button 
+        {
+            color:black;
+            font-size:15px;
+            cursor:pointer;
+        }
+
+        button:hover 
+        {
+            background-color: rgb(71, 142, 249);
+        }
+    </style>
+
+ <h1>To send message to the Server Side kindly enter the message and click send</h1>
+
+    <form id='message-form'>
+        <input name='message' type="text" placeholder="Message" id="demo" onfocus="focused()" onblur="unfocused()" autofocus autocomplete="off" />
+        <button type="submit">Send</button>
+    </form>
+ <br>
+ <h3><div id="server-data"></div></h3>
+ <h2><div id="broadcast-data"></div></h2>
+ </head>
+
+<body>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.js"></script>
+    <script>
+        var socket = io();
+
+        //Receiving Data from server side and placing at id server-data.
+        socket.on('socketData',function(data)           
+        { 
+            document.getElementById('server-data').innerText = data.description;
+        });
+
+
+        // Receiving new messages broadcasted from the server/client
+        socket.on('newMessage', function(data)  
+        {
+            document.getElementById('broadcast-data').innerText = data.description; // Display the new broadcasted message inside the div
+        });
+
+        //Picking HTML Data
+        document.getElementById('message-form').addEventListener('submit',function (e)
+        {
+           e.preventDefault();   // prevent the form from submitting
+
+            socket.emit('dataSocket', // Sending data to server side.
+            {
+                // to: 'darpanmehta0001@gmail.com',
+                text: document.querySelector('input[name=message]').value
+            });
+            // Clear the input field after sending the message
+            document.querySelector('input[name=message]').value = '';
+        });
+
+        function focused()
+        {document.getElementById("demo").style.backgroundColor='lightblue';}
+
+        function unfocused()
+        {document.getElementById("demo").style.backgroundColor='';}
+    </script>
+</body>
+</html> 
+ 
